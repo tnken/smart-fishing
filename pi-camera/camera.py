@@ -1,6 +1,6 @@
 import time
 
-log_file = 'camera_mode_test.log'
+log_file = '/srv/pi-camera/camera_mode.log'
 time_duration = 3
 
 #
