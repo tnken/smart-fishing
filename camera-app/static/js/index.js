@@ -1,4 +1,4 @@
-const url = "http://localhost:5000"
+const url = "http://192.168.249.1:5000"
 const duraion = "2000"
 
 async function startHandler() {

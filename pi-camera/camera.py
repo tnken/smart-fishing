@@ -3,7 +3,9 @@ import time
 log_file = 'camera_mode_test.log'
 time_duration = 3
 
+#
 # This script is for controlling the Raspi-camera in the backgroud
+#
 
 class PiCamera:
     mode_waiting = 'WAIT'

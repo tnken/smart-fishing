@@ -8,6 +8,10 @@ mode_waiting = 'WAIT'
 mode_picture = 'SHOOTING (Picture)'
 mode_video = 'SHOOTING (Video)'
 
+#
+# Client App to operate pi-camera
+#
+
 def write_camera_log(mode, comment):
     now = datetime.now()
     with open(camera_log_file, mode='a') as f:
@@ -40,4 +44,4 @@ def stop():
     return jsonify({'status': status})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False, host="0.0.0.0")
