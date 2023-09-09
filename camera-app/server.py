@@ -5,8 +5,8 @@ app = Flask(__name__)
 
 camera_log_file = '/srv/pi-camera/camera_mode.log'
 mode_waiting = 'WAIT'
-mode_picture = 'SHOOTING (Picture)'
-mode_video = 'SHOOTING (Video)'
+mode_picture = 'Picture'
+mode_video = 'Video'
 
 #
 # Client App to operate pi-camera

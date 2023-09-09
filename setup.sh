@@ -20,15 +20,16 @@ echo -e "interface wlan0\n  static ip_address=$ip_addr\n  nohook wpa_supplicant"
 echo -e "ctrl_interface=/var/run/hostapd\nctrl_interface_group=0\ninterface=wlan0\ndriver=nl80211\nssid=$ssid\nhw_mode=g\ncountry_code=JP\nchannel=11\nieee80211d=1\nwmm_enabled=0\nmacaddr_acl=0\nauth_algs=1\nwpa=2\nwpa_passphrase=$pass\nwpa_key_mgmt=WPA-PSK\nrsn_pairwise=CCMP" > /etc/hostapd/hostapd.conf
 echo "country=JP" >> /etc/wpa_supplicant/wpa_supplicant.conf
 rfkill unblock wifi
+systemctl unmask hostapd.service
+systemctl enable hostapd.service
 
 # App setup
 mkdir -p /srv/pi-camera
 touch /srv/pi-camera/camera_mode.log
+chmod 766 /srv/pi-camera/camera_mode.log
 echo WAIT:$(date +'%Y%m%d%H%M%S'): >> /srv/pi-camera/camera_mode.log
 
-# Systemd settings
-systemctl unmask hostapd.service
-systemctl enable hostapd.service
+# Run camera-app and pi-camera as background service
 
 echo done.
 echo Please reboot RaspberryPi to reflect this setup.
