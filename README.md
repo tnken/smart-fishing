@@ -3,6 +3,10 @@
 - Raspberry Pi Zero W
 - Raspberry Pi OS Lite (32-bit)
 
-## Initial Setup
+## Initial setup
+
+```:bash
+$ sudo ./setup.sh
+```
 
 ## Housing
