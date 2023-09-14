@@ -45,8 +45,7 @@ class PiCamera:
             self.picamera.stop_recording()
         except:
             with open(log_file, mode='a') as f:
-                f.write(self.mode_error + ':' + now.strftime("%Y%m%d%H%M%S") + ':' + 'Video error' + '\n')    
-
+                f.write(self.mode_error + ':' + now.strftime("%Y%m%d%H%M%S") + ':' + 'Video error' + '\n')
 
     def start_camera(self):
         print('Start shooting camera')
@@ -54,7 +53,7 @@ class PiCamera:
         try:
             file_name = camera_output + '/' + now.strftime("%Y%m%d%H%M%S") + '.jpg'
             self.picamera.start()
-            time.sleep(4) 
+            time.sleep(4)
             self.picamera.capture_file(file_name)
             print('shoot: ' + file_name)
         except:

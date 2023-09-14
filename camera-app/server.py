@@ -1,18 +1,21 @@
 from datetime import datetime
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, Response
 
 import base64
+import cv2
 import glob
 import os
+import time
 
 app = Flask(__name__)
 
-img_path = '/srv/pi-camera'
-camera_log_file = img_path + '/camera_mode.log'
+srv_path = '/srv/pi-camera'
+camera_log_file = srv_path + '/camera_mode.log'
 mode_waiting = 'WAIT'
 mode_error = 'ERROR'
 mode_picture = 'PICTURE'
 mode_video = 'VIDEO'
+init_timestamp = 20230901010101
 
 #
 # Client App to operate pi-camera
@@ -28,17 +31,45 @@ def current_status():
         latest = f.readlines()[-1]
         status = latest.split(':')[0]
         comment = latest.split(':')[-1]
-        if len(comment) > 0: 
+        if len(comment) > 0:
             status += (': ' + comment)
         return status
 
 def latest_picture_mode_timestamp():
-    latest = 20230901010101
+    latest = init_timestamp
     with open(camera_log_file) as f:
         for line in f.readlines():
             if line.split(':')[0] == mode_picture:
                 latest = int(line.split(':')[1])
     return latest
+
+def latest_video_mode_timestamp():
+    latest = init_timestamp
+    with open(camera_log_file) as f:
+        for line in f.readlines():
+            if line.split(':')[0] == mode_video:
+                latest = int(line.split(':')[1])
+    return latest
+
+def latest_video():
+    latest_video = init_timestamp
+    for mp4_path in glob.glob(srv_path + '/*mp4'):
+        file_name = os.path.basename(mp4_path)
+        file_timestamp = os.path.splitext(file_name)[0]
+        if int(file_timestamp) >= latest_video_mode_timestamp():
+            if (file_timestamp) > latest_video:
+                latest_video = int(file_timestamp)
+    return srv_path + str(latest_video) + 'mp4'
+
+def gen():
+    cam = cv2.VideoCapture(latest_video())
+    while True:
+        ret_val, image = cam.read()
+        if not ret_val:
+            break
+        flag, frame = cv2.imencode('.jpg', image)
+        yield b'--frame\r\n' + b'Content-Type: image/jpeg\r\n\r\n' + bytearray(frame) + b'\r\n\r\n'
+        time.sleep(1/60)
 
 @app.route('/')
 def index():
@@ -70,14 +101,18 @@ def stop():
 @app.route('/pictures', methods=['GET'])
 def pictures():
     pictures = []
-    for jpg_path in glob.glob(img_path + '/*.jpg'):
+    for jpg_path in glob.glob(srv_path + '/*.jpg'):
         file_name = os.path.basename(jpg_path)
         file_timestamp = os.path.splitext(file_name)[0]
-        if int(file_timestamp) > latest_picture_mode_timestamp():
+        if int(file_timestamp) >= latest_picture_mode_timestamp():
             with open(jpg_path, 'rb') as img_file:
                 data = base64.b64encode(img_file.read())
                 pictures.append(data.decode('utf-8'))
     return jsonify({'pictures': pictures, 'picture_mode_timestamp': latest_picture_mode_timestamp()})
+
+@app.route('/video_feed', methods=['GET'])
+def video_feed():
+    return Response(gen(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 if __name__ == '__main__':
     app.run(debug=False, host="0.0.0.0")
