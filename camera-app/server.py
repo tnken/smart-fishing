@@ -3,6 +3,7 @@ from flask import Flask, jsonify, render_template
 
 import base64
 import glob
+import os
 
 app = Flask(__name__)
 
@@ -31,27 +32,31 @@ def current_status():
             status += (': ' + comment)
         return status
 
-def latest_picture_mode():
+def latest_picture_mode_timestamp():
     latest = 20230901010101
     with open(camera_log_file) as f:
         for line in f.readlines():
             if line.split(':')[0] == mode_picture:
-                latest = line.split(':')[1]
+                latest = int(line.split(':')[1])
     return latest
 
 @app.route('/')
 def index():
-    print(latest_picture_mode())
     return render_template('index.html')
 
 @app.route('/status', methods=['GET'])
 def status():
     status = current_status()
-    latest_picture_mode()
     return jsonify({'status': status})
 
-@app.route('/start', methods=['GET'])
-def start():
+@app.route('/start_video', methods=['GET'])
+def start_video():
+    write_camera_log(mode_video, '')
+    status = current_status()
+    return jsonify({'status': status})
+
+@app.route('/start_picture', methods=['GET'])
+def start_picture():
     write_camera_log(mode_picture, '')
     status = current_status()
     return jsonify({'status': status})
@@ -66,11 +71,13 @@ def stop():
 def pictures():
     pictures = []
     for jpg_path in glob.glob(img_path + '/*.jpg'):
-        with open(jpg_path, 'rb') as img_file:
-            data = base64.b64encode(img_file.read())
-            pictures.append(data.decode('utf-8'))
-    return jsonify({'pictures': pictures})
-
+        file_name = os.path.basename(jpg_path)
+        file_timestamp = os.path.splitext(file_name)[0]
+        if int(file_timestamp) > latest_picture_mode_timestamp():
+            with open(jpg_path, 'rb') as img_file:
+                data = base64.b64encode(img_file.read())
+                pictures.append(data.decode('utf-8'))
+    return jsonify({'pictures': pictures, 'picture_mode_timestamp': latest_picture_mode_timestamp()})
 
 if __name__ == '__main__':
     app.run(debug=False, host="0.0.0.0")

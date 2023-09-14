@@ -10,8 +10,8 @@
   <div class="pure-g-r" style="margin-left:10px;">
     <div class="pure-u-1">
       <h1>Camera operatoin</h1>
-      <p>Mode：</p>
-      <p><button class="pure-button" type="button" name="name" value="value">Camera</button> <button class="pure-button" type="button" name="name" value="value">Video</button></p>
+      <p>Mode： <span id="mode-status"></span></p>
+      <p><button id="picture-button" class="pure-button" type="button" onclick="modePictureHandler()">Picture</button> <button id="video-button" class="pure-button" type="button" onclick="modeVideoHandler()">Video</button></p>
       <p>Camera status： <span id="camera-status"></span></p>
       <p><button class="pure-button" type="button" onclick="startHandler()">Start</button> <button class="pure-button" type="button" onclick="stopHandler()">Stop</button></p>
     </div>

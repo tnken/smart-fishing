@@ -6,7 +6,7 @@
 ## Initial setup
 
 ```:bash
-$ sudo chmod 666 setup.sh
+$ sudo chmod 766 setup.sh
 $ sudo ./setup.sh
 $ sudo reboot
 ```

@@ -11,7 +11,7 @@ pass="pi-camera0"
 
 # Deps
 apt update -y && apt upgrade -y
-apt install -y python3-pip hostapd dnsmasq
+apt install -y python3-pip hostapd dnsmasq ffmpeg tmux git vim # todo: remove unnecessary pkgs
 pip install flask picamera2
 
 # Network setup
@@ -25,6 +25,7 @@ systemctl enable hostapd.service
 
 # App setup
 mkdir -p /srv/pi-camera
+ sudo chmod 777 /srv/pi-camera
 touch /srv/pi-camera/camera_mode.log
 chmod 777 /srv/pi-camera/camera_mode.log
 echo WAIT:$(date +'%Y%m%d%H%M%S'): >> /srv/pi-camera/camera_mode.log
