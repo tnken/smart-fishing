@@ -6,13 +6,14 @@
 
 # AP settings
 ip_addr="192.168.249.1/24"
-ssid="PI_CAMERA_WIFI"
+ssid="PI_CAMERA_WIFI0"
 pass="pi-camera0"
 
 # Deps
 apt update -y && apt upgrade -y
 apt install -y python3-pip hostapd dnsmasq ffmpeg tmux git vim # todo: remove unnecessary pkgs
-pip install flask picamera2 imageio[ffmpeg]
+pip install --upgrade pip
+pip install -r requirement.txt
 
 # Network setup
 echo -e "interface=wlan0\ndhcp-range=192.168.249.50,192.168.249.150,255.255.255.0,12h" >> /etc/dnsmasq.conf

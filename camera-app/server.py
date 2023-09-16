@@ -1,6 +1,6 @@
 from datetime import datetime
 from flask import Flask, jsonify, render_template, Response
-from flask_socketio import SocketIO, emit
+# from flask_socketio import SocketIO, emit
 from imageio import v3 as iio
 
 import base64
