@@ -1,8 +1,10 @@
 from datetime import datetime
 from flask import Flask, jsonify, render_template, Response
+from flask_socketio import SocketIO, emit
+from imageio import v3 as iio
 
 import base64
-import cv2
+import imageio
 import glob
 import os
 import time
@@ -16,6 +18,7 @@ mode_error = 'ERROR'
 mode_picture = 'PICTURE'
 mode_video = 'VIDEO'
 init_timestamp = 20230901010101
+frame_rate = 30
 
 #
 # Client App to operate pi-camera
@@ -51,25 +54,22 @@ def latest_video_mode_timestamp():
                 latest = int(line.split(':')[1])
     return latest
 
-def latest_video():
+def latest_video_path():
     latest_video = init_timestamp
     for mp4_path in glob.glob(srv_path + '/*mp4'):
         file_name = os.path.basename(mp4_path)
         file_timestamp = os.path.splitext(file_name)[0]
         if int(file_timestamp) >= latest_video_mode_timestamp():
-            if (file_timestamp) > latest_video:
+            if int(file_timestamp) > latest_video:
                 latest_video = int(file_timestamp)
-    return srv_path + str(latest_video) + 'mp4'
+    return srv_path + '/' + str(latest_video) + '.mp4'
 
-def gen():
-    cam = cv2.VideoCapture(latest_video())
-    while True:
-        ret_val, image = cam.read()
-        if not ret_val:
-            break
-        flag, frame = cv2.imencode('.jpg', image)
-        yield b'--frame\r\n' + b'Content-Type: image/jpeg\r\n\r\n' + bytearray(frame) + b'\r\n\r\n'
-        time.sleep(1/60)
+def gen_feed():
+    video = imageio.get_reader(latest_video_path(), 'ffmpeg', ffmpeg_params=['-r', str(frame_rate)])
+    for _, frame in enumerate(video):
+        jpg_encoded = iio.imwrite("<bytes>", frame, plugin="pillow", format="JPEG")
+        yield b'--frame\r\n' + b'Content-Type: image/jpeg\r\n\r\n' + jpg_encoded + b'\r\n\r\n'
+        time.sleep(1/frame_rate)
 
 @app.route('/')
 def index():
@@ -112,7 +112,7 @@ def pictures():
 
 @app.route('/video_feed', methods=['GET'])
 def video_feed():
-    return Response(gen(), mimetype='multipart/x-mixed-replace; boundary=frame')
+    return Response(gen_feed(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 if __name__ == '__main__':
     app.run(debug=False, host="0.0.0.0")

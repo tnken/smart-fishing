@@ -12,8 +12,7 @@ pass="pi-camera0"
 # Deps
 apt update -y && apt upgrade -y
 apt install -y python3-pip hostapd dnsmasq ffmpeg tmux git vim # todo: remove unnecessary pkgs
-pip install flask picamera2
-pip install opencv-python
+pip install flask picamera2 imageio
 
 # Network setup
 echo -e "interface=wlan0\ndhcp-range=192.168.249.50,192.168.249.150,255.255.255.0,12h" >> /etc/dnsmasq.conf
