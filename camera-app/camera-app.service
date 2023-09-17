@@ -1,0 +1,10 @@
+[Unit]
+Description = camera app
+
+[Service]
+ExecStart = /home/tanaken/smart-fishing/camera-app/server.py
+Restart = always
+Type = simple
+
+[Install]
+WantedBy = multi-user.target

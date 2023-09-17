@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from datetime import datetime
 from flask import Flask, jsonify, render_template, Response
 # from flask_socketio import SocketIO, emit

@@ -32,6 +32,17 @@ chmod 777 /srv/pi-camera/camera_mode.log
 echo WAIT:$(date +'%Y%m%d%H%M%S'): >> /srv/pi-camera/camera_mode.log
 
 # Run camera-app and pi-camera as background service
+chmod 755 camera-app/server.py
+chmod 755 pi-camera/camera.py
+cp camera-app/camera-app.service etc/systemd/system/
+cp pi-camera/pi-camera.service /etc/systemd/system
+# Run manualy
+# systemctl enable camera-app.service
+# systemctl start camera-app.service
+# systemctl status camera-app.service
+# systemctl enable pi-camera.service
+# systemctl start pi-camera.service
+# systemctl status pi-camera.service
 
 echo done.
 echo Please reboot RaspberryPi to reflect this setup.

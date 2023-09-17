@@ -1,0 +1,10 @@
+[Unit]
+Description = pi camera
+
+[Service]
+ExecStart = /home/tanaken/smart-fishing/pi-camera/camera.py
+Restart = always
+Type = simple
+
+[Install]
+WantedBy = multi-user.target
