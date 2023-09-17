@@ -11,7 +11,7 @@ pass="pi-camera0"
 
 # Deps
 apt update -y && apt upgrade -y
-apt install -y python3-pip hostapd dnsmasq ffmpeg tmux git vim # todo: remove unnecessary pkgs
+apt install -y python3-pip hostapd dnsmasq ffmpeg libjpeg-dev tmux git vim # todo: remove unnecessary pkgs
 pip install --upgrade pip
 pip install -r requirement.txt
 
