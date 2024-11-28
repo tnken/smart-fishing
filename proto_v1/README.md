@@ -1,4 +1,4 @@
-# Smart Fishing
+# Prototype v1
 ## Requirement
 - Raspberry Pi Zero W
 - Raspberry Pi OS Lite (32-bit)
